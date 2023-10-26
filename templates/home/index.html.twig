@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Acceuil{% endblock %}
+
+{% block body %}
+    {% include 'widget/header.html.twig' %}
+    <main class="container">
+                <div class="article-list">
+                    {% include 'article/list.html.twig' with {articles} %}
+                </div>
+    </main>
+    {% include 'widget/footer.html.twig' %}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}²
+{% endblock %}

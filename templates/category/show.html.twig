@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ category.name }}
+{% endblock %}
+
+{% block body %}
+	{% include 'widget/header.html.twig' %}
+	<main class="container">
+		<div class="row g-5">
+			<div class="col">
+				<h3 class="pb-4 mb-4 fst-italic border-bottom">{{category.name}}s :</h3>
+				<div id="article-list">
+					{% include 'article/list.html.twig' with {articles : category.articles, leftCol:4, rightCol:8} %}
+				</div>
+			</div>
+		</div>
+	</main>
+	{% include 'widget/footer.html.twig' %}
+{% endblock %}
