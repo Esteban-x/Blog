@@ -10,13 +10,18 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Mime\MimeTypes;
+
+$mimeTypes = new MimeTypes();
+$imageMimeTypes = $mimeTypes->getMimeTypes('jpeg'); 
+$videoMimeTypes = $mimeTypes->getMimeTypes('mp4'); 
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Article implements TimestampedInterface
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -44,6 +49,18 @@ class Article implements TimestampedInterface
     private ?string $attachment = null;
 
     #[Vich\UploadableField(mapping: "articles", fileNameProperty: 'attachment')]
+    /**
+     * @Assert\File(
+     *     mimeTypes={
+     *         "image/jpeg",
+     *         "image/png",
+     *         "video/mp4",
+     *         "video/quicktime",
+     *         "video/x-msvideo"
+     *     },
+     *     mimeTypesMessage="Veuillez télécharger une image (JPEG, PNG) ou une vidéo (MP4, MOV, AVI)."
+     * )
+     */
     private ?File $attachmentFile = null;
 
     #[ORM\OneToOne(mappedBy: 'Article', cascade: ['persist', 'remove'])]
@@ -74,8 +91,8 @@ class Article implements TimestampedInterface
     public function setAttachmentFile(?File $attachmentFile = null): void
     {
         $this->attachmentFile = $attachmentFile;
-        
-        if(null !== $attachmentFile){
+
+        if (null !== $attachmentFile) {
             $this->updatedAt = new \DateTimeImmutable();
         }
     }

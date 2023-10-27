@@ -7,7 +7,21 @@
     <div class="container">
         <h1>{{ article.title }}</h1>
         <hr>
-        {{ article.media }}
+
+        <div id="article-list">
+			{% if article.getAttachment() is not null %}
+                {% if article.getAttachment() ends with '.jpg' or article.getAttachment() ends with '.png' %}
+                    <a href="#">
+                        <img src="{{ asset('uploads/attachments/' ~ article.getAttachment()) }}" alt="Media" loading="lazy" width="100%" height="100%">
+                    </a>
+                {% elseif article.getAttachment() ends with '.mp4' or article.getAttachment() ends with '.mov' or article.getAttachment() ends with '.avi' %}
+                    <video width="100%" height="100%" controls>
+                        <source src="{{ asset('uploads/attachments/' ~ article.getAttachment()) }}" type="video/mp4">
+                        Votre navigateur ne supporte pas la vidéo.
+                    </video>
+                {% endif %}
+            {% endif %}
+		</div>
 
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         <h2 class="comment-title mt-5">
@@ -15,7 +29,6 @@
         </h2>
 
         <hr>
-
 
         <div class="comment-area mb-5">
             {{ form(commentForm, {'attr':{'class':'comment-form'}}) }}

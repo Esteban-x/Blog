@@ -6,9 +6,9 @@ use App\Entity\Article;
 use App\Entity\Comment;
 use App\Form\Type\CommentType;
 use App\Repository\CategoryRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ArticleController extends AbstractController
 {
@@ -22,6 +22,8 @@ class ArticleController extends AbstractController
 
         $comment = new Comment($article);
         $commentForm = $this->createForm(CommentType::class, $comment);
+
+        
 
 
         return $this->render('article/show.html.twig', [

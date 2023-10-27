@@ -49,3 +49,4 @@ class Media
         return $this;
     }
 }
+
