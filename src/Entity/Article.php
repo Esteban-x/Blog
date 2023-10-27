@@ -49,18 +49,6 @@ class Article implements TimestampedInterface
     private ?string $attachment = null;
 
     #[Vich\UploadableField(mapping: "articles", fileNameProperty: 'attachment')]
-    /**
-     * @Assert\File(
-     *     mimeTypes={
-     *         "image/jpeg",
-     *         "image/png",
-     *         "video/mp4",
-     *         "video/quicktime",
-     *         "video/x-msvideo"
-     *     },
-     *     mimeTypesMessage="Veuillez télécharger une image (JPEG, PNG) ou une vidéo (MP4, MOV, AVI)."
-     * )
-     */
     private ?File $attachmentFile = null;
 
     #[ORM\OneToOne(mappedBy: 'Article', cascade: ['persist', 'remove'])]

@@ -1,12 +1,7 @@
 <nav class="py-2 bg-dark border-bottom">
     <div class="container justify-content-center d-flex flex-wrap">
         <a href="{{ path('app_home') }}" class="nav nav-link text-white">Acceuil</a>
-        <div class="dropdown">
-            <a class="nav nav-link text-white"
-               role="button" href="{{ path('admin') }}">
-                Gérer
-            </a>
-        </div>
+        
         <li class="nav nav-item dropdown">
             <a class="text-white nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 Catégories
@@ -14,21 +9,24 @@
             <ul class="dropdown-menu">
                 <li>
                     {% for category in categories %}
-                        <a class="dropdown-item" href="{{ path('category_show', {slug:category.slug}) }}">{{ category.name }}</a>
+                        <a class="dropdown-item" href="{{ path('category_show', {slug:category.slug}) }}">{{ category.name|capitalize }}</a>
                     {% endfor %}
                 </li>
             </ul>
         </li>
-        <a class="nav nav-link text-white" role="button" href="">
-            Publier
-        </a>
+        <div class="dropdown">
+            <a class="nav nav-link text-white"
+               role="button" href="{{ path('admin') }}">
+                Publier
+            </a>
+        </div>
     </div>
 </nav>
 <div class="container">
     <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
         <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none"
            href="{{ path('app_home') }}">
-            <span class="fs-4">Rando-Florac</span>
+            <span class="fs-4">Blog-Estéban-x</span>
         </a>
         <ul class="nav nav-pills">
             {% if not is_granted('IS_AUTHENTICATED_FULLY') %}

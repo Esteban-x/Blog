@@ -1,4 +1,6 @@
 easy_admin:
     design:
         translations: 'fr' 
-    
+    entities:
+        Article:
+            class: App\Entity\Article
