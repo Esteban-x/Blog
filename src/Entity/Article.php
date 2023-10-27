@@ -8,10 +8,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Article implements TimestampedInterface
@@ -28,21 +28,6 @@ class Article implements TimestampedInterface
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
-    /**
-     * @var UploadedFile|null
-     *
-     * @Assert\File(
-     *     maxSize="2M",
-     *     mimeTypes={"image/jpeg", "image/png", "image/gif"}
-     * )
-     */
-    private mixed $media;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?String $mediaName;
-
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $createdAt = null;
 
@@ -55,42 +40,50 @@ class Article implements TimestampedInterface
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
+    #[ORM\Column(length: 255, type: 'string')]
+    private ?string $attachment = null;
+
+    #[Vich\UploadableField(mapping: "articles", fileNameProperty: 'attachment')]
+    private ?File $attachmentFile = null;
+
+    #[ORM\OneToOne(mappedBy: 'Article', cascade: ['persist', 'remove'])]
+    private ?Media $media = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
 
+    public function getAttachment(): ?string
+    {
+        return $this->attachment;
+    }
+
+    public function setAttachment(string $attachment): self
+    {
+        $this->attachment = $attachment;
+        return $this;
+    }
+
+    public function getAttachmentFile(): ?File
+    {
+        return $this->attachmentFile;
+    }
+
+    public function setAttachmentFile(?File $attachmentFile = null): void
+    {
+        $this->attachmentFile = $attachmentFile;
+        
+        if(null !== $attachmentFile){
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    public function getMedia(): ?UploadedFile
-    {
-        return $this->media;
-    }
-
-    public function setMedia(?UploadedFile $media): void
-    {
-        $this->media = $media;
-        if ($media) {
-            $this->updatedAt = new \DateTimeImmutable();
-        } else {
-            $this->media = null;
-        }
-    }
-
-    public function getMediaName(): ?string
-    {
-        return $this->mediaName;
-    }
-
-    public function setMediaName(?string $mediaName): void
-    {
-        $this->mediaName = $mediaName;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
@@ -196,7 +189,25 @@ class Article implements TimestampedInterface
         return $this;
     }
 
-    public function __toString():string{
+    public function __toString(): string
+    {
         return $this->title;
+    }
+
+    public function getMedia(): ?Media
+    {
+        return $this->media;
+    }
+
+    public function setMedia(Media $media): static
+    {
+        // set the owning side of the relation if necessary
+        if ($media->getArticle() !== $this) {
+            $media->setArticle($this);
+        }
+
+        $this->media = $media;
+
+        return $this;
     }
 }

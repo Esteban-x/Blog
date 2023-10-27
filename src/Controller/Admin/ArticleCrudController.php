@@ -3,13 +3,15 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 
 class ArticleCrudController extends AbstractCrudController
@@ -24,9 +26,8 @@ class ArticleCrudController extends AbstractCrudController
     {
         yield TextField::new('title');
         yield SlugField::new('slug')->setTargetFieldName('title');
-        yield Field::new('media', 'Media')
-            ->setFormType(FileType::class)
-            ->setFormTypeOptions(['required' => true]);
+        yield TextField::new('attachmentFile')->setFormType(VichImageType::class)->onlyWhenCreating();
+        yield ImageField::new('attachment')->setBasePath('/uploads/attachments')->onlyOnIndex();
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
         yield AssociationField::new('categories')->setRequired(true);
